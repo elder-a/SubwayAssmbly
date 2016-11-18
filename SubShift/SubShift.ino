@@ -16,6 +16,17 @@ void setup() {
 
     //this setup is currntly MSG
     "setupA: \n"
+    //r30, r31 for rZ
+    "ldi r30, 120 \n"
+    "ldi r31, 0 \n"
+    //STS   k, Rr
+    "ldi r16, 0b00001111 \n"
+    "ldi r17, 0b00001111 \n"
+    "ldi r18, 0b00001111 \n"
+    "sts 120, r16\n"
+    "sts 121, r17\n"
+    "sts 122, r18\n"
+
 
     "ldi r21, 3 \n"
 
@@ -25,7 +36,8 @@ void setup() {
     "cbi 0x0B, 0x04 \n" //turns off pin 4 / latch
 
     "intz: \n"
-    "ldi r18, 0b11110000 \n" //value for shift out
+    "ldi r18, 0b0 \n" //value for shift out
+    //"ld r18, Z+ \n"
     "ldi r20, 128 \n" //value and mask
 
     "comp: \n"
@@ -50,14 +62,72 @@ void setup() {
     "rcall delay \n" // delay
     "rjmp comp \n" //go back for anothe rround
 
-    "end: \n"
-    "dec r21 \n"
-    "brne intz \n"
+    "end: \n "
+
+
+    "intz2: \n"
+    "ldi r18, 0b11001100 \n" //value for shift out
+    //"ld r18, Z+ \n"
+    "ldi r20, 128 \n" //value and mask
+
+    "comp2: \n"
+    "cbi 0x0B, 0x03 \n" //turns off pin 3 / clock
+    "rcall delay \n" // delay
+
+    "tst r20 \n"
+    "breq end2 \n"
+    "mov r19, r18 \n" //coping register
+    "and r19, r20 \n" //anding to get sing bit
+    "breq zero2 \n" //if zero branch
+    "sbi 0x0B, 0x02 \n" //turns on pin 2 / data
+    "lsr r20 \n" //divde by 2
+    "rjmp clockend2 \n"
+
+    "zero2: \n"
+    "cbi 0x0B, 0x02 \n" //turns off pin 2 / data
+    "lsr r20 \n" //divde by 2
+    "clockend2: \n"
+
+    "sbi 0x0B, 0x03 \n" //turns on pin 3 / clock
+    "rcall delay \n" // delay
+    "rjmp comp2 \n" //go back for anothe rround
+
+    "end2: \n "
+
+
+    "intz3: \n"
+    "ldi r18, 0b11111111 \n" //value for shift out
+    //"ld r18, Z+ \n"
+    "ldi r20, 128 \n" //value and mask
+
+    "comp3: \n"
+    "cbi 0x0B, 0x03 \n" //turns off pin 3 / clock
+    "rcall delay \n" // delay
+
+    "tst r20 \n"
+    "breq end3 \n"
+    "mov r19, r18 \n" //coping register
+    "and r19, r20 \n" //anding to get sing bit
+    "breq zero3 \n" //if zero branch
+    "sbi 0x0B, 0x02 \n" //turns on pin 2 / data
+    "lsr r20 \n" //divde by 2
+    "rjmp clockend3 \n"
+
+    "zero3: \n"
+    "cbi 0x0B, 0x02 \n" //turns off pin 2 / data
+    "lsr r20 \n" //divde by 2
+    "clockend3: \n"
+
+    "sbi 0x0B, 0x03 \n" //turns on pin 3 / clock
+    "rcall delay \n" // delay
+    "rjmp comp3 \n" //go back for anothe rround
+
+    "end3: \n "
+
+    //    "dec r21 \n"
+    //    "brne intz \n"
 
     "sbi 0x0B, 0x04 \n" //turns on pin 4 / latch
-
-
-
 
 
     //      //this setup is currntly LSG
