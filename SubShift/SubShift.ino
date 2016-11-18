@@ -96,7 +96,7 @@ void setup() {
 
 
     "intz3: \n"
-    "ldi r18, 0b11111111 \n" //value for shift out
+    "ldi r18, 0b1111111 \n" //value for shift out
     //"ld r18, Z+ \n"
     "ldi r20, 128 \n" //value and mask
 
