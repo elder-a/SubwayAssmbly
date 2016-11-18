@@ -7,6 +7,7 @@ Course: TEI4M
 uint8_t data = 2;
 uint8_t clock = 3;
 uint8_t latch = 4;
+char beck[] = "     ";
 
 
 
@@ -17,15 +18,15 @@ void setup() {
     //this setup is currntly MSG
     "setupA: \n"
     //r30, r31 for rZ
-    "ldi r30, 120 \n"
-    "ldi r31, 0 \n"
-    //STS   k, Rr
-    "ldi r16, 0b00001111 \n"
-    "ldi r17, 0b00001111 \n"
-    "ldi r18, 0b00001111 \n"
-    "sts 120, r16\n"
-    "sts 121, r17\n"
-    "sts 122, r18\n"
+    //    "ldi r26, lo8(beck) \n"
+    //    "ldi r27, hi8(beck) \n"
+    //    //STS   k, Rr
+    //    "ldi r16, 0b00001111 \n"
+    //    "ldi r17, 0b00001111 \n"
+    //    "ldi r18, 0b00001111 \n"
+    //    "st X+, r16\n"
+    //    "st X+, r17\n"
+    //    "st X+, r18\n"
 
 
     "ldi r21, 3 \n"
@@ -34,10 +35,15 @@ void setup() {
     "out 0x0A, r30\n" //sets all the I/O pins to output
 
     "cbi 0x0B, 0x04 \n" //turns off pin 4 / latch
+    
+    "ldi r16, 0b10000000 \n"
+    "ldi r17, 0b00001111 \n"
+    "ldi r18, 0b11111110 \n"
 
     "intz: \n"
-    "ldi r18, 0b0 \n" //value for shift out
-    //"ld r18, Z+ \n"
+    //"ldi r18, 0b01000000 \n" //value for shift out
+    //  "ld r18, X+ \n"
+
     "ldi r20, 128 \n" //value and mask
 
     "comp: \n"
@@ -46,7 +52,7 @@ void setup() {
 
     "tst r20 \n"
     "breq end \n"
-    "mov r19, r18 \n" //coping register
+    "mov r19, r16 \n" //coping register
     "and r19, r20 \n" //anding to get sing bit
     "breq zero \n" //if zero branch
     "sbi 0x0B, 0x02 \n" //turns on pin 2 / data
@@ -66,8 +72,9 @@ void setup() {
 
 
     "intz2: \n"
-    "ldi r18, 0b11001100 \n" //value for shift out
-    //"ld r18, Z+ \n"
+    //"ldi r18, 0b00001111 \n" //value for shift out
+    //"ld r18, X+ \n"
+
     "ldi r20, 128 \n" //value and mask
 
     "comp2: \n"
@@ -76,7 +83,7 @@ void setup() {
 
     "tst r20 \n"
     "breq end2 \n"
-    "mov r19, r18 \n" //coping register
+    "mov r19, r17 \n" //coping register
     "and r19, r20 \n" //anding to get sing bit
     "breq zero2 \n" //if zero branch
     "sbi 0x0B, 0x02 \n" //turns on pin 2 / data
@@ -96,8 +103,8 @@ void setup() {
 
 
     "intz3: \n"
-    "ldi r18, 0b1111111 \n" //value for shift out
-    //"ld r18, Z+ \n"
+    //"ldi r18, 0b11111101 \n" //value for shift out
+    //"ld r18, X+ \n"
     "ldi r20, 128 \n" //value and mask
 
     "comp3: \n"
@@ -126,6 +133,8 @@ void setup() {
 
     //    "dec r21 \n"
     //    "brne intz \n"
+    
+    "rcall longDelay \n"
 
     "sbi 0x0B, 0x04 \n" //turns on pin 4 / latch
 
@@ -174,6 +183,16 @@ void setup() {
     "dec r9\n" //takes one aways from r9 from 255
     "brne delay\n"  //jumps back to delay if r9 is not 0
     "ret\n"  //returns back to where delay was called
+
+    "longDelay:\n" //allows to jump to line
+    "dec r8\n" //takes one aways from r8 from 255
+    "brne delay\n" //jumps back to delay if r8 is not 0
+    "dec r9\n" //takes one aways from r9 from 255
+    "brne delay\n"  //jumps back to delay if r9 is not 0
+    "dec r10\n" //takes one aways from r9 from 255
+    "brne delay\n"  //jumps back to delay if r9 is not 0
+    "ret\n"  //returns back to where delay was called
+
   );
 
 }
