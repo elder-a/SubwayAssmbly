@@ -7,7 +7,7 @@ Course: TEI4M
 uint8_t data = 2;
 uint8_t clock = 3;
 uint8_t latch = 4;
-char beck[] = "     ";
+//char beck[] = "     ";
 
 
 
@@ -29,20 +29,26 @@ void setup() {
     //    "st X+, r18\n"
 
 
-    "ldi r21, 3 \n"
-
     "ser r30\n" //sets all the bits high in R 30
     "out 0x0A, r30\n" //sets all the I/O pins to output
 
-    "cbi 0x0B, 0x04 \n" //turns off pin 4 / latch
-    
     "ldi r16, 0b10000000 \n"
     "ldi r17, 0b00001111 \n"
     "ldi r18, 0b11111110 \n"
 
+
+    "start: \n"
+
+    "cbi 0x0B, 0x04 \n" //turns off pin 4 / latch
+
+
+    /*
+    i use up to R 21
+    */
+    "ldi r22, 8\n"
+
+
     "intz: \n"
-    //"ldi r18, 0b01000000 \n" //value for shift out
-    //  "ld r18, X+ \n"
 
     "ldi r20, 128 \n" //value and mask
 
@@ -68,12 +74,10 @@ void setup() {
     "rcall delay \n" // delay
     "rjmp comp \n" //go back for anothe rround
 
-    "end: \n "
+    "end: \n "                                           //end of first
 
 
     "intz2: \n"
-    //"ldi r18, 0b00001111 \n" //value for shift out
-    //"ld r18, X+ \n"
 
     "ldi r20, 128 \n" //value and mask
 
@@ -99,12 +103,11 @@ void setup() {
     "rcall delay \n" // delay
     "rjmp comp2 \n" //go back for anothe rround
 
-    "end2: \n "
+    "end2: \n "                                    //end of second loop
 
 
     "intz3: \n"
-    //"ldi r18, 0b11111101 \n" //value for shift out
-    //"ld r18, X+ \n"
+
     "ldi r20, 128 \n" //value and mask
 
     "comp3: \n"
@@ -131,51 +134,18 @@ void setup() {
 
     "end3: \n "
 
-    //    "dec r21 \n"
-    //    "brne intz \n"
-    
-    "rcall longDelay \n"
-
-    "sbi 0x0B, 0x04 \n" //turns on pin 4 / latch
+    "sbi 0x0B, 0x04 \n" //turns on pin 4 / latch            //End of Shift Out
 
 
-    //      //this setup is currntly LSG
-    //    "setup2: \n"
-    //
-    //    "ser r30\n" //sets all the bits high in R 30
-    //    "out 0x0A, r30\n" //sets all the I/O pins to output
-    //
-    //    "intz2: \n"
-    //    "cbi 0x0B, 0x04 \n" //turns off pin 4 / latch
-    //
-    //    "ldi r18, 0b10101010 \n" //value for shift out
-    //    "ldi r20, 1 \n" //value and mask
-    //
-    //    "comp2: \n"
-    //    "cbi 0x0B, 0x03 \n" //turns off pin 3 / clock
-    //    "rcall delay \n" // delay
-    //
-    //    "tst r20 \n"
-    //    "breq end2 \n"
-    //    "mov r19, r18 \n" //coping register
-    //    "and r19, r20 \n" //anding to get sing bit
-    //    "breq zero2 \n" //if zero branch
-    //    "sbi 0x0B, 0x02 \n" //turns on pin 2 / data
-    //    "lsr r18 \n" //divde by 2
-    //    "rjmp clockend2 \n"
-    //
-    //    "zero2: \n"
-    //    "cbi 0x0B, 0x02 \n" //turns off pin 2 / data
-    //    "lsr r18 \n" //divde by 2
-    //    "clockend2: \n"
-    //
-    //    "sbi 0x0B, 0x03 \n" //turns on pin 3 / clock
-    //    "rcall delay \n" // delay
-    //    "rjmp comp2 \n" //go back for anothe rround
-    //
-    //
-    //    "end2: \n"
-    //    "sbi 0x0B, 0x04 \n" //turns on pin 4 / latch
+    "ldi r22, 255 \n\t rcall delay \n" //chooses register, sets register to 32
+
+    "sec \n"
+    "ror r16 \n"  
+    "lsl r18 \n"
+
+
+    "rjmp start \n"
+
 
     "delay:\n" //allows to jump to line
     "dec r8\n" //takes one aways from r8 from 255
@@ -184,6 +154,7 @@ void setup() {
     "brne delay\n"  //jumps back to delay if r9 is not 0
     "ret\n"  //returns back to where delay was called
 
+
     "longDelay:\n" //allows to jump to line
     "dec r8\n" //takes one aways from r8 from 255
     "brne delay\n" //jumps back to delay if r8 is not 0
@@ -191,8 +162,52 @@ void setup() {
     "brne delay\n"  //jumps back to delay if r9 is not 0
     "dec r10\n" //takes one aways from r9 from 255
     "brne delay\n"  //jumps back to delay if r9 is not 0
+    "dec r21\n" //takes one aways from r16 from 255
+    "brne delay\n"  //jumps back to delay if r16 is not 0
     "ret\n"  //returns back to where delay was called
 
+
+    //"dec r21 \n"
+    //"brne intz \n"
+
+
+    //      //this setup is currntly LSG
+    //    "setup2: \n"
+    //
+    //    "ser r30\n" //sets all the bits high in R 30
+    //    "out 0x0A, r30\n" //sets all the I/O pins to output
+    //
+    //    "intz4: \n"
+    //    "cbi 0x0B, 0x04 \n" //turns off pin 4 / latch
+    //
+    //    "ldi r18, 0b10101010 \n" //value for shift out
+    //    "ldi r20, 1 \n" //value and mask
+    //
+    //    "comp4: \n"
+    //    "cbi 0x0B, 0x03 \n" //turns off pin 3 / clock
+    //    "rcall delay \n" // delay
+    //
+    //    "tst r20 \n"
+    //    "breq end4 \n"
+    //    "mov r19, r18 \n" //coping register
+    //    "and r19, r20 \n" //anding to get sing bit
+    //    "breq zero4 \n" //if zero branch
+    //    "sbi 0x0B, 0x02 \n" //turns on pin 2 / data
+    //    "lsr r18 \n" //divde by 2
+    //    "rjmp clockend4 \n"
+    //
+    //    "zero4: \n"
+    //    "cbi 0x0B, 0x02 \n" //turns off pin 2 / data
+    //    "lsr r18 \n" //divde by 2
+    //    "clockend4: \n"
+    //
+    //    "sbi 0x0B, 0x03 \n" //turns on pin 3 / clock
+    //    "rcall delay \n" // delay
+    //    "rjmp comp4 \n" //go back for anothe rround
+    //
+    //
+    //    "end4: \n"
+    //    "sbi 0x0B, 0x04 \n" //turns on pin 4 / latch
   );
 
 }
