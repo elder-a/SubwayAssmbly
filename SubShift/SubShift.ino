@@ -36,7 +36,7 @@ void setup() {
     "ldi r17, 0b00001111 \n"
     "ldi r18, 0b11111110 \n"
 
-"ldi r24, 8 \n"
+    "ldi r24, 7 \n"
 
     "start: \n"
     //MAKE SURE TO USE RIGHT REGISTERS
@@ -75,7 +75,7 @@ void setup() {
     "rjmp comp \n" //go back for anothe rround
 
     "end: \n "                                           //end of first
-    
+
 
     "intz2: \n"
 
@@ -136,7 +136,12 @@ void setup() {
 
     "sbi 0x0B, 0x04 \n" //turns on pin 4 / latch            //End of Shift Out
 
-    "ldi r22, 40 \n\t rcall delay \n" //chooses register, sets register to 32
+    "last4: \n"
+
+
+    "first8: \n"
+
+    "ldi r22, 10 \n\t rcall delay \n" //chooses register, sets register to 32
 
     "sbrc r23, 0 \n"
     "rjmp odd \n"
@@ -163,10 +168,12 @@ void setup() {
     "sec \n"
     "ror r16 \n"
     "lsl r18 \n"
-    
 
+    "dec r24 \n"
+    "breq out \n"
     "rjmp start \n"
-
+    "out: "
+    //works on the second out
 
     "delay:\n" //allows to jump to line
     "dec r8\n" //takes one aways from r8 from 255
